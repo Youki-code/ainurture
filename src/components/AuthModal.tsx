@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X } from 'lucide-react';
 import { useAuthStore } from '../lib/store';
 import toast from 'react-hot-toast';
+import { useRouter } from 'next/router';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -11,15 +12,18 @@ interface AuthModalProps {
 
 export function AuthModal({ isOpen, onClose }: AuthModalProps) {
   const { signInWithGoogle, isLoading } = useAuthStore();
+  const router = useRouter();
 
   const handleGoogleLogin = async () => {
-    try {
-      await signInWithGoogle();
-      onClose();
-    } catch (error) {
-      console.error('Error logging in with Google:', error);
-      toast.error('Failed to login with Google. Please try again.');
-    }
+    // try {
+    //   await signInWithGoogle();
+    //   onClose();
+    // } catch (error) {
+    //   console.error('Error logging in with Google:', error);
+    //   toast.error('Failed to login with Google. Please try again.');
+    // }
+    //直接跳转到features页面
+    router.push('/email-campaign');
   };
 
   return (

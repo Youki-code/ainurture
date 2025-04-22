@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Navigate, useLocation } from 'react-router-dom';
+import { useRouter } from 'next/router';
 import { useAuthStore } from '../lib/store';
 import { supabase } from '../lib/supabase';
 
@@ -9,7 +9,7 @@ interface ProtectedRouteProps {
 
 export function ProtectedRoute({ children }: ProtectedRouteProps) {
   const { user, isLoading } = useAuthStore();
-  const location = useLocation();
+  const router = useRouter();
 
   useEffect(() => {
     const checkSession = async () => {
@@ -21,6 +21,12 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
     
     checkSession();
   }, []);
+
+  useEffect(() => {
+    // if (!isLoading && !user) {
+    //   router.push('/');
+    // }
+  }, [isLoading, user, router]);
 
   if (isLoading) {
     return (
@@ -40,7 +46,7 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
   }
 
   if (!user) {
-    return <Navigate to="/" state={{ from: location }} replace />;
+    return null;
   }
 
   return <>{children}</>;
