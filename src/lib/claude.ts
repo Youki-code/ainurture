@@ -21,7 +21,7 @@ export async function generateEmailTemplate(
   retryCount = 0
 ): Promise<EmailTemplate> {
   try {
-    console.log('666 - Making request to API endpoint');
+    console.log('Making request to API endpoint');
     
     const response = await fetch('/api/anthropic', {
       method: 'POST',
@@ -37,16 +37,16 @@ export async function generateEmailTemplate(
       }),
     });
 
-    console.log('666 - API Response status:', response.status);
+    console.log('API Response status:', response.status);
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      console.log('666 - API Error:', errorData);
+      console.log('API Error:', errorData);
       throw new Error(errorData.error || `API Error: ${response.statusText}`);
     }
 
     const data = await response.json();
-    console.log('666 - API Response data:', data);
+    console.log('API Response data:', data);
     
     // Validate response structure
     if (!data || typeof data !== 'object') {
@@ -62,11 +62,11 @@ export async function generateEmailTemplate(
       html: data.html
     };
   } catch (error) {
-    console.error('666 - Error generating email template:', error);
+    console.error('Error generating email template:', error);
 
     if (retryCount < MAX_RETRIES) {
       const nextRetryDelay = RETRY_DELAY * Math.pow(2, retryCount);
-      console.log(`666 - Retrying template generation (${retryCount + 1}/${MAX_RETRIES})...`);
+      console.log(`Retrying template generation (${retryCount + 1}/${MAX_RETRIES})...`);
       await delay(nextRetryDelay);
       return generateEmailTemplate(audience, scenario, type, goal, referenceTemplate, retryCount + 1);
     }

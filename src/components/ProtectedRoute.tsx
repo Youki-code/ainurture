@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../lib/store';
+import { supabase } from '../lib/supabase';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -9,6 +10,17 @@ interface ProtectedRouteProps {
 export function ProtectedRoute({ children }: ProtectedRouteProps) {
   const { user, isLoading } = useAuthStore();
   const location = useLocation();
+
+  useEffect(() => {
+    const checkSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        localStorage.removeItem('supabase.auth.token');
+      }
+    };
+    
+    checkSession();
+  }, []);
 
   if (isLoading) {
     return (

@@ -47,6 +47,18 @@ function App() {
   const navigate = useNavigate();
   const location = useLocation();
 
+  // Handle OAuth callback
+  React.useEffect(() => {
+    if (location.search.includes('code=')) {
+      const params = new URLSearchParams(location.search);
+      const code = params.get('code');
+      if (code) {
+        // Remove code from URL without triggering a navigation
+        window.history.replaceState({}, '', '/email-campaign');
+      }
+    }
+  }, [location]);
+
   // Prefetch email campaign page
   React.useEffect(() => {
     const prefetchEmailCampaign = () => {
@@ -436,6 +448,7 @@ function App() {
               </ProtectedRoute>
             } 
           />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Suspense>
 
