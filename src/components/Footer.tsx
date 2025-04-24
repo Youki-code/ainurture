@@ -1,5 +1,5 @@
 import React from 'react';
-import { useRouter } from 'next/router';
+import { useNavigate } from 'react-router-dom';
 import { 
   CircuitBoard,
   Mail, 
@@ -14,7 +14,7 @@ import {
 import { motion } from 'framer-motion';
 
 export function Footer() {
-  const router = useRouter();
+  const navigate = useNavigate();
 
   // Navigation links for quick access - Removed About Us and Careers
   const quickLinks = [
@@ -67,7 +67,7 @@ export function Footer() {
       }
     } else {
       // Handle route navigation
-      router.push(path);
+      navigate(path);
       window.scrollTo(0, 0);
     }
   };

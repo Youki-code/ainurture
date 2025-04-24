@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X } from 'lucide-react';
 import { useAuthStore } from '../lib/store';
 import toast from 'react-hot-toast';
-import { useRouter } from 'next/router';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -12,18 +11,15 @@ interface AuthModalProps {
 
 export function AuthModal({ isOpen, onClose }: AuthModalProps) {
   const { signInWithGoogle, isLoading } = useAuthStore();
-  const router = useRouter();
 
   const handleGoogleLogin = async () => {
-    // try {
-    //   await signInWithGoogle();
-    //   onClose();
-    // } catch (error) {
-    //   console.error('Error logging in with Google:', error);
-    //   toast.error('Failed to login with Google. Please try again.');
-    // }
-    //直接跳转到features页面
-    router.push('/email-campaign');
+    try {
+      await signInWithGoogle();
+      onClose();
+    } catch (error) {
+      console.error('Error logging in with Google:', error);
+      toast.error('Failed to login with Google. Please try again.');
+    }
   };
 
   return (
@@ -60,8 +56,7 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
 
             <button
               onClick={handleGoogleLogin}
-              disabled={isLoading}
-              className="w-full py-4 px-6 bg-white rounded-lg font-semibold text-gray-900 flex items-center justify-center gap-3 hover:bg-gray-100 hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full py-4 px-6 bg-white rounded-lg font-semibold text-gray-900 flex items-center justify-center gap-3 hover:bg-gray-100 hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer"
             >
               <svg className="w-5 h-5" viewBox="0 0 24 24">
                 <path

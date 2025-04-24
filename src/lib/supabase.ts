@@ -1,27 +1,16 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-// Create Supabase client
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+if (!supabaseUrl || !supabaseAnonKey) {
+  throw new Error('Missing Supabase environment variables');
+}
 
-// Initialize session from sessionStorage if exists
-const initSession = async () => {
-  try {
-    const existingToken = sessionStorage.getItem('supabase.auth.token');
-    if (existingToken) {
-      const { data: { session }, error } = await supabase.auth.getSession();
-      if (error) {
-        console.error('Error initializing session:', error);
-        sessionStorage.removeItem('supabase.auth.token');
-      }
-      return session;
-    }
-  } catch (error) {
-    console.error('Error in initSession:', error);
+export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  auth: {
+    autoRefreshToken: true,
+    persistSession: true,
+    detectSessionInUrl: true
   }
-};
-
-// Call initSession when the module loads
-initSession();
+});

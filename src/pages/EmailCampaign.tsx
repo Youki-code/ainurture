@@ -122,11 +122,12 @@ export function EmailCampaign() {
       console.log('Generating templates with parameters:', { audience, scenario, type, goal });
 
       // Generate three variations
-      const templates = await Promise.all([
-        generateEmailTemplate(audience, scenario, type, goal, uploadedTemplate || undefined),
-        generateEmailTemplate(audience, scenario, type, goal, uploadedTemplate || undefined),
-        generateEmailTemplate(audience, scenario, type, goal, uploadedTemplate || undefined)
-      ]);
+      // const templates = await Promise.all([
+      //   generateEmailTemplate(audience, scenario, type, goal, uploadedTemplate || undefined),
+      //   generateEmailTemplate(audience, scenario, type, goal, uploadedTemplate || undefined),
+      //   generateEmailTemplate(audience, scenario, type, goal, uploadedTemplate || undefined)
+      // ]);
+      const templates =  [generateEmailTemplate(audience, scenario, type, goal, uploadedTemplate || undefined)]
 
       console.log('Generated templates:', templates);
 

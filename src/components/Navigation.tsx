@@ -1,5 +1,5 @@
 import React from 'react';
-import { useRouter } from 'next/router';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CircuitBoard, Menu } from 'lucide-react';
 import { useAuthStore } from '../lib/store';
@@ -12,7 +12,8 @@ interface NavItem {
 }
 
 export function Navigation() {
-  const router = useRouter();
+  const navigate = useNavigate();
+  const location = useLocation();
   const { user } = useAuthStore();
   const [isLoginModalOpen, setIsLoginModalOpen] = React.useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
@@ -34,7 +35,7 @@ export function Navigation() {
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               className="flex items-center gap-2 cursor-pointer"
-              onClick={() => router.push('/')}
+              onClick={() => navigate('/')}
             >
               <CircuitBoard className="w-8 h-8 text-[#00F0FF]" />
               <span className="font-bold text-xl bg-gradient-to-r from-[#00F0FF] to-[#A742FF] bg-clip-text text-transparent">
@@ -49,13 +50,13 @@ export function Navigation() {
                   initial={{ opacity: 0, y: -20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.1 }}
-                  onClick={() => router.push(item.id)}
+                  onClick={() => navigate(item.id)}
                   className={`relative px-2 py-1 transition-colors ${
-                    router.pathname === item.id ? 'text-[#00F0FF]' : 'text-gray-400 hover:text-white'
+                    location.pathname === item.id ? 'text-[#00F0FF]' : 'text-gray-400 hover:text-white'
                   }`}
                 >
                   {item.label}
-                  {router.pathname === item.id && (
+                  {location.pathname === item.id && (
                     <motion.div
                       layoutId="nav-indicator"
                       className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-[#00F0FF] to-[#A742FF]"
@@ -109,11 +110,11 @@ export function Navigation() {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: index * 0.1 }}
                     onClick={() => {
-                      router.push(item.id);
+                      navigate(item.id);
                       setIsMobileMenuOpen(false);
                     }}
                     className={`w-full text-left px-4 py-3 rounded-lg transition-colors ${
-                      router.pathname === item.id 
+                      location.pathname === item.id 
                         ? 'bg-gradient-to-r from-[#00F0FF]/10 to-[#A742FF]/10 text-white' 
                         : 'text-gray-400'
                     }`}

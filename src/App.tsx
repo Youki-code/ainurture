@@ -22,7 +22,6 @@ import { Footer } from './components/Footer';
 import { Toaster } from 'react-hot-toast';
 import { useAuthStore } from './lib/store';
 import { HeroIllustration } from './components/HeroIllustration';
-import { ProtectedRoute } from './components/ProtectedRoute';
 
 // Lazy load non-critical pages
 const Features = lazy(() => import('./pages/Features').then(module => ({ default: module.Features })));
@@ -46,18 +45,6 @@ function App() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-
-  // Handle OAuth callback
-  React.useEffect(() => {
-    if (location.search.includes('code=')) {
-      const params = new URLSearchParams(location.search);
-      const code = params.get('code');
-      if (code) {
-        // Remove code from URL without triggering a navigation
-        window.history.replaceState({}, '', '/email-campaign');
-      }
-    }
-  }, [location]);
 
   // Prefetch email campaign page
   React.useEffect(() => {
@@ -443,12 +430,13 @@ function App() {
           <Route 
             path="/email-campaign" 
             element={
-              <ProtectedRoute>
+              user ? (
                 <EmailCampaign />
-              </ProtectedRoute>
+              ) : (
+                <Navigate to="/" replace state={{ from: location }} />
+              )
             } 
           />
-          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Suspense>
 

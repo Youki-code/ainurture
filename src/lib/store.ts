@@ -1,40 +1,54 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { User } from '@supabase/supabase-js';
 import { supabase } from './supabase';
+
+interface User {
+  id: string;
+  email: string;
+  displayName: string;
+  profilePicture?: string;
+}
 
 interface AuthState {
   user: User | null;
   isLoading: boolean;
   error: string | null;
   setUser: (user: User | null) => void;
-  setIsLoading: (isLoading: boolean) => void;
   signInWithGoogle: () => Promise<void>;
   signOut: () => Promise<void>;
-  checkAuth: () => Promise<boolean>;
+  checkAuth: () => Promise<void>;
 }
 
 export const useAuthStore = create<AuthState>()(
   persist(
     (set) => ({
       user: null,
-      isLoading: true,
+      isLoading: false,
       error: null,
       setUser: (user) => set({ user }),
-      setIsLoading: (isLoading) => set({ isLoading }),
       
       signInWithGoogle: async () => {
         try {
           set({ isLoading: true, error: null });
-          const { error } = await supabase.auth.signInWithOAuth({
+          
+          const { data, error } = await supabase.auth.signInWithOAuth({
             provider: 'google',
             options: {
-              redirectTo: `${window.location.origin}/email-campaign`,
-            },
+              redirectTo: window.location.origin,
+              queryParams: {
+                access_type: 'offline',
+                prompt: 'consent'
+              }
+            }
           });
+
           if (error) throw error;
+          
+          return;
         } catch (error) {
-          set({ error: error instanceof Error ? error.message : 'An error occurred' });
+          console.error('Google sign in error:', error);
+          set({ error: error instanceof Error ? error.message : 'Authentication failed' });
+          throw error;
         } finally {
           set({ isLoading: false });
         }
@@ -47,7 +61,8 @@ export const useAuthStore = create<AuthState>()(
           if (error) throw error;
           set({ user: null });
         } catch (error) {
-          set({ error: error instanceof Error ? error.message : 'An error occurred' });
+          set({ error: error instanceof Error ? error.message : 'Sign out failed' });
+          throw error;
         } finally {
           set({ isLoading: false });
         }
@@ -73,15 +88,12 @@ export const useAuthStore = create<AuthState>()(
                 profilePicture: user_metadata.avatar_url
               }
             });
-            return true;
           } else {
             set({ user: null });
-            return false;
           }
         } catch (error) {
           console.error('Auth check error:', error);
           set({ error: error instanceof Error ? error.message : 'Session check failed', user: null });
-          return false;
         } finally {
           set({ isLoading: false });
         }
@@ -89,19 +101,7 @@ export const useAuthStore = create<AuthState>()(
     }),
     {
       name: 'auth-storage',
-      storage: {
-        getItem: (name) => {
-          const str = localStorage.getItem(name);
-          if (!str) return null;
-          return JSON.parse(str);
-        },
-        setItem: (name, value) => {
-          localStorage.setItem(name, JSON.stringify(value));
-        },
-        removeItem: (name) => {
-          localStorage.removeItem(name);
-        },
-      },
+      partialize: (state) => ({ user: state.user })
     }
   )
 );

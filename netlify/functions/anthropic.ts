@@ -142,4 +142,3 @@ Generate a complete, production-ready HTML email template that's optimized for d
     };
   }
 };
-<!-- Trigger Vercel Auto Deploy -->
