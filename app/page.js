@@ -22,7 +22,7 @@ import { FloatingElement } from "./components/FloatingElement";
 import { AuthModal } from "./components/AuthModal";
 import { Footer } from "./components/Footer";
 import { useAuthStore } from "./lib/store";
-import { HeroIllustration } from "./components/HeroIllustration";
+import HeroIllustration from "./components/HeroIllustration";
 
 export default function Home() {
   const { user } = useAuthStore();

@@ -14,7 +14,7 @@ export function AuthModal({ isOpen, onClose }) {
     try {
       await signInWithGoogle();
       onClose();
-      router.push("/email-campaign");
+      // router.push("/email-campaign");
     } catch (error) {
       console.error("Error logging in with Google:", error);
       toast.error("Failed to login with Google. Please try again.");

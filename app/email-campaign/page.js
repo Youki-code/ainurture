@@ -31,6 +31,7 @@ export default function EmailCampaign() {
   const [templates, setTemplates] = useState([]);
   const [uploadedTemplate, setUploadedTemplate] = useState(null);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [countdown, setCountdown] = useState(30);
   const [previewHtml, setPreviewHtml] = useState(null);
   const [experimentSetup, setExperimentSetup] = useState({
     testDuration: 7,
@@ -70,8 +71,24 @@ export default function EmailCampaign() {
       }
 
       setIsGenerating(true);
+      setCountdown(30);
+
+      // 开始倒计时
+      const timer = setInterval(() => {
+        setCountdown((prev) => {
+          if (prev <= 1) {
+            clearInterval(timer);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
 
       const templates = [await generateEmailTemplate(requirement)];
+
+      // 清除倒计时
+      clearInterval(timer);
+      setCountdown(0);
 
       console.log("Generated templates:", templates);
 
@@ -98,6 +115,7 @@ export default function EmailCampaign() {
       toast.error(error.message);
     } finally {
       setIsGenerating(false);
+      setCountdown(0);
     }
   };
 
@@ -258,7 +276,7 @@ export default function EmailCampaign() {
                   {isGenerating ? (
                     <div className="flex items-center justify-center gap-2">
                       <RefreshCw className="w-5 h-5 animate-spin" />
-                      Generating...
+                      {countdown > 0 ? `生成中... ${countdown}秒` : "生成中..."}
                     </div>
                   ) : (
                     "Generate Templates"
