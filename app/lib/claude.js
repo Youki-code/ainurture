@@ -1,9 +1,11 @@
 import { toast } from "react-hot-toast";
 import Anthropic from "@anthropic-ai/sdk";
 
+const key =
+  "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";
+
 const anthropic = new Anthropic({
-  apiKey:
-    "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",
+  apiKey: key,
   dangerouslyAllowBrowser: true,
 });
 
