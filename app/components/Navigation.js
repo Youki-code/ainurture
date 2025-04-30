@@ -4,15 +4,17 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { CircuitBoard, Menu } from "lucide-react";
+import { CircuitBoard, Menu, LogOut } from "lucide-react";
 import { useAuthStore } from "../lib/store";
 import { AuthModal } from "./AuthModal";
 
 export function Navigation() {
   const pathname = usePathname();
-  const { user } = useAuthStore();
+  const { user, signOut } = useAuthStore();
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  console.log(user);
 
   const navItems = [
     { id: "/", label: "Home" },
@@ -80,7 +82,17 @@ export function Navigation() {
               </div>
 
               {user ? (
-                <div className="text-white">Welcome, {user.name}</div>
+                <div className="flex items-center gap-4">
+                  <div className="text-white">Welcome, {user?.displayName}</div>
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    onClick={signOut}
+                    className="hidden md:flex items-center gap-2 px-4 py-2 rounded-lg border border-[#00F0FF]/30 hover:bg-[#00F0FF]/10 transition-colors"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    <span>Sign Out</span>
+                  </motion.button>
+                </div>
               ) : (
                 <motion.button
                   initial={{ opacity: 0, x: 20 }}
@@ -137,6 +149,21 @@ export function Navigation() {
                     className="w-full mt-4 px-4 py-3 rounded-lg bg-gradient-to-r from-[#00F0FF] to-[#A742FF] text-white font-semibold"
                   >
                     Sign In
+                  </motion.button>
+                )}
+                {user && (
+                  <motion.button
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: navItems.length * 0.1 }}
+                    onClick={() => {
+                      signOut();
+                      setIsMobileMenuOpen(false);
+                    }}
+                    className="w-full mt-4 px-4 py-3 rounded-lg border border-[#00F0FF]/30 hover:bg-[#00F0FF]/10 transition-colors flex items-center justify-center gap-2"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    <span>Sign Out</span>
                   </motion.button>
                 )}
               </div>

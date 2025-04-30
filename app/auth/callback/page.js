@@ -17,14 +17,21 @@ export default function AuthCallback() {
           error,
         } = await supabase.auth.getSession();
 
+        console.log("Session data:", session);
+        console.log("Session error:", error);
+
         if (error) {
           throw error;
         }
 
         if (session) {
+          router.push("/email-campaign");
+          console.log("Session exists, checking auth...");
           await checkAuth();
+          console.log("Auth check completed, redirecting to email-campaign");
           router.push("/email-campaign");
         } else {
+          console.log("No session found, redirecting to home");
           router.push("/");
         }
       } catch (error) {
